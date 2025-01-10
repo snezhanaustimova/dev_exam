@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.staticfiles',
     'axes',
+    'captcha',
 
     'django_celery_beat',
 
@@ -49,8 +50,10 @@ INSTALLED_APPS = [
     'transactions',
 ]
 
+RECAPTCHA_PUBLIC_KEY = '6LdYlLIqAAAAAFDtRHUvhildC1lNiMK0WsTv-7Sf'
+RECAPTCHA_PRIVATE_KEY = '6LdYlLIqAAAAAM5zhb1vxNlFXR6CHI10uAs1lnmL'
+
 MIDDLEWARE = [
-    'axes.middleware.AxesMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,10 +61,25 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # AxesMiddleware should be the last middleware. It only formats user
+    # lockout messages and renders Axes lockout responses on failed user
+    # authentication attempts from login views.
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'banking_system.urls'
 AUTH_USER_MODEL = 'accounts.User'
+
+AUTHENTICATION_BACKENDS = [
+   'axes.backends.AxesStandaloneBackend', # Axes must be first
+   'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_ONLY_USER_FAILURES = True
+AXES_RESET_ON_SUCCESS = True # сбрасывать неудачные попытки после удачной
+AXES_FAILURE_LIMIT = 5 # количество попыток
+AXES_COOLOFF_TIME = 0.02 # время блокировки в ЧАСАХ
+AXES_LOCK_OUT = 'axes.lockout.Lockout'
 
 TEMPLATES = [
     {
@@ -79,10 +97,6 @@ TEMPLATES = [
     },
 ]
 
-# AUTHENTICATION_BACKENDS = [
-#    'axes.backends.AxesBackend', # Axes must be first
-#    'django.contrib.auth.backends.ModelBackend',
-# ]
 
 WSGI_APPLICATION = 'banking_system.wsgi.application'
 
@@ -135,10 +149,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-AXES_RESET_ON_SUCCESS = True
-AXES_FAILURE_LIMIT: 6
-AXES_COOLOFF_TIME: 1
 
 ACCOUNT_NUMBER_START_FROM = 1000000000
 MINIMUM_DEPOSIT_AMOUNT = 10

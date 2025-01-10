@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView

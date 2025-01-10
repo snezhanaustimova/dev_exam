@@ -2,16 +2,21 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import transaction
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox
 
 from .models import User, BankAccountType, UserBankAccount, UserAddress
 from .constants import GENDER_CHOICE
 from .security_container import validate_input
 
 class LoginUserForm(AuthenticationForm):
+    recaptcha = ReCaptchaField(widget=ReCaptchaV2Checkbox, public_key=settings.RECAPTCHA_PUBLIC_KEY,
+                               private_key=settings.RECAPTCHA_PRIVATE_KEY)
     username = forms.CharField(label="Email",
                     widget=forms.EmailInput(attrs={'class': 'form-input'}), validators=[validate_input])
     password = forms.CharField(label="Password",
                     widget=forms.PasswordInput(attrs={'class': 'form-input'}), validators=[validate_input])
+
 
 
 class UserAddressForm(forms.ModelForm):
