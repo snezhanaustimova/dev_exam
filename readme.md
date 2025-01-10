@@ -1,4 +1,4 @@
-#Simple Banking Management System in Python using Django Framework
+# Simple Banking Management System in Python using Django Framework
 
 **Admin Access**
 - **Email:** admin@mail.com
