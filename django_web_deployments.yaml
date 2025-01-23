@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2025-01-12T19:19:55Z"
+  generation: 1
+  labels:
+    app: django-web
+  name: django-web
+  namespace: default
+  resourceVersion: "37581"
+  uid: 7850fc17-fa39-4f2d-970e-d999d0429bf1
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: django-web
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: django-web
+    spec:
+      containers:
+      - image: snezhnayaaaaa/develop_integrate-django-web:latest
+        imagePullPolicy: Always
+        name: develop-integrate-django-web-48pml
+        env:
+          - name: POSTGRES_PASSWORD
+            value: "dbpassword"
+          - name: POSTGRES_USER
+            value: dbuser
+          - name: POSTGRES_DB
+            value: dockerdjango
+          - name: PSQL_HOST
+            value: postgres-statefulset-0.postgres-service.default.svc.cluster.local
+        ports:
+          - containerPort: 8000
+            protocol: TCP
+
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: postgres
+#   labels:
+#     app: postgres
+#     service: postgres
+# spec:
+#   ports:
+#   - port: 5432
+#     name: tcp
+#   selector:
+#     app: postgres
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: postgres-v1
+#   labels:
+#     app: postgres
+#     version: v1
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: postgres
+#       version: v1
+#   template:
+#     metadata:
+#       labels:
+#         app: postgres
+#         version: v1
+#     spec:
+#       containers:
+#       - name: db-1
+#         image: postgres:17
+#         imagePullPolicy: IfNotPresent
+#         ports:
+#         - containerPort: 5432
+#         env:
+#           - name: POSTGRES_PASSWORD
+#             value: "dbpassword"
+#           - name: POSTGRES_USER
+#             value: dbuser
+#           - name: POSTGRES_DB
+#             value: dockerdjango
+#         volumeMounts:
+#         - name: postgres-pvc
+#           mountPath: /var/lib/postgresql/dat
+#       volumes:
+#       - name: postgres-pvc
+#         emptyDir: {}

@@ -1,0 +1,39 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: django-gateway
+spec:
+  # The selector matches the ingress gateway pod labels.
+  # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: django-web
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - django-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /transactions
+    - uri:
+        prefix: /admin
+    - uri:
+        prefix: /accounts
+    route:
+    - destination:
+        host: django-web
+        port:
+          number: 8000

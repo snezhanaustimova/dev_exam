@@ -26,3 +26,5 @@ def validate_input(user_input):
     # Проверка на словарные атаки
     if user_input.lower() in ["admin", "password", "root", "default", "guest"]:
         raise forms.ValidationError("The input is a dictionary word")
+    
+    return user_input

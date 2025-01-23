@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import transaction
+import requests
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 
@@ -16,7 +17,6 @@ class LoginUserForm(AuthenticationForm):
                     widget=forms.EmailInput(attrs={'class': 'form-input'}), validators=[validate_input])
     password = forms.CharField(label="Password",
                     widget=forms.PasswordInput(attrs={'class': 'form-input'}), validators=[validate_input])
-
 
 
 class UserAddressForm(forms.ModelForm):

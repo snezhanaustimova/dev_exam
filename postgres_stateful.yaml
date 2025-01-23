@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+spec:
+  serviceName: postgres-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-app
+    spec:
+      containers:
+        - name: db-1
+          image: postgres:17
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "dbpassword"
+            - name: POSTGRES_USER
+              value: dbuser
+            - name: POSTGRES_DB
+              value: dockerdjango
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-pvc
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: postgres-app
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
